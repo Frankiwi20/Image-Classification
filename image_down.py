@@ -1,6 +1,3 @@
-#api key AIzaSyC4sF7ckXm0Coj0n6TLa8Me45RczcUwLmQ
-#api_key = 'AIzaSyC4sF7ckXm0Coj0n6TLa8Me45RczcUwLmQ'
-#search_engine_id = '575777cfbca264733'
 import requests
 import os
 from PIL import Image, ImageFile
@@ -11,14 +8,16 @@ import hashlib
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # Replace with your actual API key and search engine ID
-api_key = 'AIzaSyC4sF7ckXm0Coj0n6TLa8Me45RczcUwLmQ'
-search_engine_id = '575777cfbca264733'
+api_key = ''
+search_engine_id = ''
 search_url = "https://www.googleapis.com/customsearch/v1"
 
+# Function to get the hash of an image
 def get_image_hash(image):
     image_hash = hashlib.md5(image.tobytes()).hexdigest()
     return image_hash
 
+# Function to get the next image number for naming files
 def get_next_image_number(save_dir):
     existing_files = [f for f in os.listdir(save_dir) if f.endswith(".jpg")]
     if not existing_files:
@@ -28,14 +27,15 @@ def get_next_image_number(save_dir):
     last_number = int(last_file.split('_')[-1].split('.')[0])
     return last_number + 1
 
+# Function to download images based on a search term
 def download_images(search_term, num_images, save_dir):
-    os.makedirs(save_dir, exist_ok=True)
+    os.makedirs(save_dir, exist_ok=True)  # Create the save directory if it doesn't exist
     downloaded_images = len([f for f in os.listdir(save_dir) if f.endswith(".jpg")])
     next_image_number = get_next_image_number(save_dir)
     image_paths = []
     existing_hashes = set()
 
-    # Load existing image hashes
+    # Load existing image hashes to avoid duplicates
     for file_name in os.listdir(save_dir):
         if file_name.endswith(".jpg"):
             file_path = os.path.join(save_dir, file_name)
@@ -109,6 +109,7 @@ def download_images(search_term, num_images, save_dir):
 
     return image_paths
 
+# Main block to download images for specific search terms
 if __name__ == "__main__":
     pencil_search_terms = ["pencil", "pencils", "colored pencils", "graphite pencils", "drawing pencils", "mechanical pencils"]
     non_pencil_search_terms = ["pen", "marker", "eraser", "notebook", "ruler", "scissors"]
@@ -120,3 +121,4 @@ if __name__ == "__main__":
         download_images(term, num_images_per_term, pencil_save_dir)
     for term in non_pencil_search_terms:
         download_images(term, num_images_per_term, non_pencil_save_dir)
+
